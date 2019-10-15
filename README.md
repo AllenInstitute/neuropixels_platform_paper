@@ -1,6 +1,6 @@
 # Neuropixels Platform Paper
 
-![recording_configuration_cartoon](icon.png | width=400)
+<img src="icon.png" width="48">
 
 This repository contains code for generating the figures in the pre-print describing the scientific findings from the Allen Institute's [Neuropixels data collection platform](https://portal.brain-map.org/explore/circuits/visual-coding-neuropixels).
 

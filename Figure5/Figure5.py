@@ -1,21 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Oct 13 10:34:20 2019
-
-@author: joshs
-"""
-
-df = pd.read_csv('/home/joshs/GitHub/neuropixels_platform_paper/data/change_detection_data.csv', index_col=0)
-
-# %%
-
 from scipy.ndimage.filters import gaussian_filter1d
 from sklearn.utils import resample    
-import matplotlib
 
-matplotlib.rcParams['pdf.fonttype'] = 42
-matplotlib.rcParams['ps.fonttype'] = 42
+code_directory = '/home/joshs/GitHub/neuropixels_platform_paper'
+
+df = pd.read_csv(os.path.join('data', 'change_detection_data.csv'), index_col=0)
+
 
 plt.figure(14782)
 plt.clf()
@@ -80,7 +69,6 @@ max_values = np.zeros((len(metrics),))
 
 all_values = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}, 5: {}}
 
-
 for area_idx, area in enumerate(areas):
     
     selection = (df.Region == area) #& \
@@ -127,9 +115,7 @@ for i in range(len(metrics)):
     
     plt.subplot(len(metrics),4,i*4+3)
     y = centers[:,i]
-    if i == 1:
-        stop
-    
+
     for k in range(8):
         plt.plot(x[k], centers[k,i],'.',color=get_color_palette(areas[k], color_palette))
         plt.errorbar(x[k], centers[k,i], yerr = errorbars[k,i], fmt='.',color=get_color_palette(areas[k], color_palette),alpha=0.8)
@@ -210,24 +196,3 @@ for metric_idx, metric in enumerate(metrics):
     plt.ylim([-0.5,len(common_names)-0.5])
     plt.xlim([-0.5,len(common_names)-0.5])    
     
-# %%
-    
-plt.figure(17811)
-plt.clf()
-    
-plt.plot(x,y,'.k')
-slope,intercept,r,p,std = linregress(x,y)
-x2 = np.linspace(60,80)
-
-plt.plot(x2,x2*slope+intercept,':m', alpha=0.5)
-
-r_s,p_s = spearmanr(x,y)
-r_p,p_p = pearsonr(x,y)
-    
-plt.xlabel('Time to first spike (active behavior)')
-plt.ylabel('Time to first spike (passive viewing)')
-plt.plot([60,80],[60,80],'-k',alpha=0.4)
-
-plt.ylim([60,80])
-plt.xlim([60,80])
-plt.axis('square')

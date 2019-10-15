@@ -2,6 +2,8 @@
 from scipy.ndimage.filters import gaussian_filter1d
 from sklearn.utils import resample    
 
+# note: use 'get_data_from_warehouse' to generate the 'df' object
+
 
 # %%
 code_directory = '/home/joshs/GitHub/neuropixels_platform_paper'

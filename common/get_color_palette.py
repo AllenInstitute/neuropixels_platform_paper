@@ -1,12 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jul 30 11:55:38 2019
-
-@author: joshs
-"""
-
-# %%
+import matplotlib.pyplot as plt
+import numpy as np
 
 def test_color_palette(name):
     
@@ -17,7 +10,7 @@ def test_color_palette(name):
     
     for idx, area in enumerate(areas):
         val = np.random.rand(1) + 1
-        plt.bar(idx, val, width=0.5, color=get_color_palette(name=name)[area])
+        plt.bar(idx, val, width=0.5, color=get_color_palette(area, name=name))
 
 # %%
 
@@ -110,7 +103,6 @@ def get_color_palette(area, name='Allen CCF'):
                 'VISrl' : hierarchy_colors[3],
                 'VISpm' : hierarchy_colors[6],
                 'VISam' : hierarchy_colors[7],
-                
                 
                 'DG' : '#A4A4A4',
                 'CA3' : '#6D6D6D',

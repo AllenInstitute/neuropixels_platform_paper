@@ -1,6 +1,12 @@
-# plot distributions
+# -*- coding: utf-8 -*-
 
-# note: use 'get_data_from_warehouse' to generate the 'df' object
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import os
+
+df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'unit_table.csv'), low_memory=False)
+
 
 area_list = [['VISp', 'VISl', 'VISrl', 'VISam', 'VISpm', 'VIS', 'VISal','VISmma','VISmmp','VISli'],
              ['LGd','LD', 'LP', 'VPM', 'TH', 'MGm','MGv','MGd','PO','LGv','VL',
@@ -20,9 +26,9 @@ metrics = [
         'firing_rate',
         'presence_ratio',
         'max_drift', 
-        'amplitude',
-        'spread',
-        'duration',
+        'waveform_amplitude',
+        'waveform_spread',
+        'waveform_duration',
         'isi_violations',
         'snr',
         'isolation_distance',
@@ -47,8 +53,6 @@ labels = [
         'Nearest-neighbors hit rate',
         
           ]
-
-
 
 bins = [
        np.linspace(-3,2,100), 
@@ -95,11 +99,11 @@ for metric_idx, metric in enumerate(metrics):
 
     for area_idx, AREAS in enumerate(area_list):
         
-        D = df[(df.structure_acronym.isin(AREAS)) & (df.quality == 'good')][metric]
+        D = df[(df.ecephys_structure_acronym.isin(AREAS)) & (df.quality == 'good')][metric]
         
-        if metric == 'duration':
+        if metric == 'waveform_duration':
             D = D + np.random.rand(len(D))*0.02
-        elif metric == 'spread':
+        elif metric == 'waveform_spread':
             D = D + np.random.rand(len(D)) * 10
         
         if use_log[metric_idx]:
@@ -158,7 +162,18 @@ plt.tight_layout()
             
 # %%
 
-# plot filtering steps
+# download full metrics dataframe
+metrics = cache.get_unit_analysis_metrics_by_session_type('brain_observatory_1.1', filter_by_validity=False, amplitude_cutoff_maximum = np.inf,
+                                                          presence_ratio_minimum = -np.inf,
+                                                          isi_violations_maximum = np.inf)
+
+metrics2 = cache.get_unit_analysis_metrics_by_session_type('functional_connectivity', filter_by_validity=False, amplitude_cutoff_maximum = np.inf,
+                                                          presence_ratio_minimum = -np.inf,
+                                                          isi_violations_maximum = np.inf)
+
+all_metrics = pd.concat([metrics, metrics2])
+
+# %%
 
 
 area_list = [['VISp', 'VISl', 'VISrl', 'VISam', 'VISpm', 'VIS', 'VISal','VISmma','VISmmp','VISli'],
@@ -181,31 +196,37 @@ values = np.zeros((5,6))
 
 for area_idx, AREAS in enumerate(area_list):
     
-     filter1 = all_metrics.structure_acronym.isin(AREAS)
+     filterA = all_metrics.ecephys_structure_acronym.isin(AREAS)
+     filter1 = df.ecephys_structure_acronym.isin(AREAS)
      
-     values[area_idx, 0] = np.sum(filter1)
+     values[area_idx, 0] = np.sum(filterA)
      
-     filter2 = df.quality == 'good'
+     filterB = all_metrics.quality == 'good'
+     filter2 = df.quality =='good'
      
-     values[area_idx, 1] = np.sum(filter1 & filter2)
+     values[area_idx, 1] = np.sum(filterA & filterB)
      
-     filter3 = (df.on_screen_rf < 0.01)
+     filter3 = (df.p_value_rf < 0.01)
                
      values[area_idx, 2] = np.sum(filter1 & filter2 & filter3)
      
-     filter4 = (df.structure_acronym.isin(main_areas))
+     filter4 = (df.ecephys_structure_acronym.isin(main_areas))
      
-     values[area_idx, 3] = np.sum(filter1 & filter2 & filter3 & filter4)
+     values[area_idx, 3] = np.sum(filter1 & filter2 &filter3 & filter4)
      
      filter5 = (df.area_rf < 2500) & \
                (df.snr > 1) & \
-               (df.firing_rate_dg > 0.1)
+               (df.firing_rate_dg > 0.1) & \
+               (df.time_to_first_spike_fl < 0.1)
                
-     values[area_idx, 4] = np.sum(filter1 & filter2 & filter3 & filter4 & filter5)
+     values[area_idx, 4] = np.sum(filter1 & filter2 &filter3 & filter4 & filter5)
      
-     filter6 = (df.time_to_first_spike_fl < 0.1)
+     filter6 = (df.timescale_ac < 300) & \
+                (df.timescale_ac > 1) & \
+                (df.spike_count_ac > 50) & \
+                (df.err_ac < 20) 
 
-     values[area_idx, 5] = np.sum(filter1 & filter2 & filter3 & filter4 & filter5 & filter6)
+     values[area_idx, 5] = np.sum(filter1 & filter2 &filter3 & filter4 & filter5 & filter6)
      
     
 plt.figure(4711)

@@ -9,7 +9,7 @@ from allensdk.brain_observatory.ecephys.stimulus_analysis import ReceptiveFieldM
 from allensdk.brain_observatory.ecephys.stimulus_analysis import DriftingGratings
 
 
-cache_directory = "/mnt/hdd0/cache_dir_10_08"
+cache_directory = "/mnt/nvme0/ecephys_cache_dir_2"
 
 manifest_path = os.path.join(cache_directory, "manifest.json")
 
@@ -17,16 +17,21 @@ cache = EcephysProjectCache.from_warehouse(manifest=manifest_path)
 
 # %%
 
-sessions = cache.get_sessions()
+# load session data
+sessions = cache.get_session_table()
 session_id = 756029989
 session = cache.get_session_data(session_id)
+
+# %%
+
+# load LFP data
 dg = DriftingGratings(session)
 probe_id = session.probes.index.values[3]
 lfp = session.get_lfp(probe_id)
 
 # %%
 
-plt.figure(1711)
+plt.figure(1711, figsize=(9,12))
 plt.clf()
     
 trial_number = 248
@@ -56,7 +61,7 @@ plt.axis('off')
 
 for area_idx, area in enumerate(areas):
     
-    units = session.units[(session.units.manual_structure_acronym == area)].index.values
+    units = session.units[(session.units.ecephys_structure_acronym == area)].index.values
                          
     total_units += len(units)
 
@@ -79,8 +84,11 @@ for area_idx, area in enumerate(areas):
     plt.xlim([np.min(t),np.max(t)])
    
     plt.axis('off')
+    
+# %%
+
 plt.subplot(num_plots,1,1)
-plt.title(total_units)
+plt.title('Unit count: ' + str(total_units))
 
 plt.subplot(num_plots,1,11)
 
@@ -95,14 +103,14 @@ ends = session.running_speed[selection].end_time
 
 t = np.linspace(-4,6,len(running_speeds))
 
-plt.plot(t, running_speeds, 'c')
+plt.plot(t, running_speeds, 'gray')
 plt.plot([t[0],t[-1]],[0,0],'--g')
 plt.ylim([-3,75])
 plt.xlim([-4,6])
 
 plt.subplot(num_plots,1,12)
 
-eye_info = session.get_eye_tracking_data()
+eye_info = session.get_pupil_data()
 
 selection = (eye_info.index.values >= bounds[0]) & \
             (eye_info.index.values < bounds[-1])
@@ -115,7 +123,7 @@ t = np.linspace(-4,6,len(pupil_width))
 
 
 plt.subplot(num_plots,1,12)
-plt.plot(t, pupil_width, 'm')
+plt.plot(t, pupil_width, 'gray')
 plt.xlim([-4,6])
 
 lfp_plot = lfp.loc[dict(time=slice(np.min(bounds),np.max(bounds)))]
@@ -125,7 +133,7 @@ plt.subplot(num_plots,1,10)
 
 t = np.linspace(-4,6,len(D))
 
-plt.plot(t,D,'-r',linewidth=0.8)
+plt.plot(t,D,'-g',linewidth=0.8)
 
 plt.xlim([np.min(t), np.max(t)])
 

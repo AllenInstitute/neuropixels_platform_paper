@@ -23,7 +23,7 @@ for mouse_idx, mouse in enumerate(df.specimen_id.unique()):
     
     for area_idx, area in enumerate(areas):
         
-        selection2 = (df.structure_acronym == area)
+        selection2 = (df.ecephys_structure_acronym == area)
         
         if np.sum(selection1 * selection2) > min_units:
                     
@@ -98,9 +98,11 @@ for i in range(len(common_area_names)):
     
 plt.subplot2grid((1,6),(0,0),colspan=4,rowspan=1)
 
+print('Total visual area units: ' + str(np.sum(np.concatenate(ds))))
+
 ax = plt.gca()
 
-box_parts = plt.boxplot(ds, patch_artist=True)
+box_parts = plt.boxplot(ds, patch_artist=True, whis=[5,95])
 plt.xticks(ticks=np.arange(len(common_area_names))+1, labels=common_area_names, fontsize=12)
 plt.ylabel('Number of units per experiment')
 

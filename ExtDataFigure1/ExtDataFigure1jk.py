@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# -*- coding: utf-8 -*-
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
 
-df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'unit_table.csv'), low_memory=False)
+### PATH VARIABLES ##############################
+cache_directory = '/mnt/nvme0/ecephys_cache_dir_2'
+code_directory = '/home/joshs/GitHub/neuropixels_platform_paper'
+###################################################
+
+df = pd.read_csv(os.path.join(code_directory, 'data', 'unit_table.csv'), low_memory=False)
 
 # %%
 
@@ -33,7 +36,7 @@ for mouse_idx, mouse in enumerate(df.specimen_id.unique()):
         
         selection2 = (df.ecephys_structure_acronym == area)
         
-        if np.sum(selection1 * selection2) > min_units:
+        if np.sum(selection1 & selection2) > min_units:
                     
             num_units_per_area[mouse_idx, area_idx] = np.sum(selection1 & selection2)
         

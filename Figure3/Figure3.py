@@ -2,8 +2,12 @@
 from scipy.ndimage.filters import gaussian_filter1d
 from sklearn.utils import resample    
 
-df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'unit_table.csv'), low_memory=False)
+### PATH VARIABLES ##############################
+cache_directory = '/mnt/nvme0/ecephys_cache_dir_2'
+code_directory = '/home/joshs/GitHub/neuropixels_platform_paper'
+###################################################
 
+df = pd.read_csv(os.path.join(code_directory, 'data', 'unit_table.csv'), low_memory=False)
 
 # %%
 

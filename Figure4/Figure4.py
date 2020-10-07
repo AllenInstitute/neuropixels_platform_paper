@@ -4,9 +4,11 @@ import scipy.stats
 import pandas as pd
 import matplotlib.pyplot as plt
 
+#############################################################
+code_directory = '/home/joshs/GitHub/neuropixels_platform_paper'
+###################################################
 
-dataDir = r'\\allen\programs\braintv\workgroups\nc-ophys\corbettb\changeMod figure for npx platform paper\figures'
-
+dataDir = os.path.join(code_directory, 'data')
 
 regions = ['LGd','V1','LM','RL','LP','AL','PM','AM']
 

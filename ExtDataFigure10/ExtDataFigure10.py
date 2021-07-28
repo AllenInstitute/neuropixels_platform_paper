@@ -121,7 +121,7 @@ for area_idx, area in enumerate(areas):
             selection &= (df[metric] > 1)
             selection &= (df.spike_count_ac > 50)
             selection &= (df.err_ac < 20)
-            num_after_ac[area_idx] = np.sum(selection)
+            #num_after_ac[area_idx] = np.sum(selection)
 
         M = function_to_apply[metric_idx](df[selection][metric].values) 
             
@@ -254,7 +254,6 @@ for area_idx, area in enumerate(areas):
             selection &= (df[metric] > 1)
             selection &= (df.spike_count_ac > 50)
             selection &= (df.err_ac < 20)
-            num_after_ac[area_idx] = np.sum(selection)
 
   
         selection2 = (df.cortical_layer < 5)
